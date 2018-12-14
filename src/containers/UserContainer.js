@@ -52,6 +52,9 @@ class UserContainer extends React.Component {
                     rows="20"
                     style={{backgroundColor:'rgba(255,255,255,0.2)',margin:"20px",width:600}}
                 />
+                <div id="stack_graf">
+
+                </div>
             </div>
         )
     }
@@ -77,9 +80,16 @@ export default connect(
 )(UserContainer)
 
 let params=[];
+let arrays=[];
 function find_params(perem){
     for(let i=0;i<params.length;i++){
         if(params[i].name == perem) return params[i];
+    }
+    return null;
+}
+function find_arrays(perem){
+    for(let i=0;i<arrays.length;i++){
+        if(arrays[i].name == perem) return arrays[i];
     }
     return null;
 }
@@ -89,10 +99,13 @@ function start(trg){
 
 function v(code){
     params=[];
+    arrays=[];
+    window.chart.series.map((el)=>{return el.destroy()});
   let arrComand = code.split(';');
   let result ="";
   for(let i=0;i<arrComand.length;i++){
       let res = ob(arrComand[i]);
+
       if(res.status){
           result+=res.data+"\n";
       }else{
@@ -115,9 +128,20 @@ function  ob(commands) {
             else
                 return _res(false,"Не могу создать переменную")
         }
+        case "array_init":{
+            if(com.length ==2)
+            {
+                array_init(com[1]);
+                return _res(true,"Инициализация массива "+com[1]);
+            }
+            else
+                return _res(false,"Не могу создать массив")
+        }
         case "print":{
             if(com.length ==2) {
                 let perem = find_params(com[1]);
+                console.log(11,JSON.stringify(params));
+
                 if (perem != null)
                     return _res(true, com[1] + " = " + perem.value);
                 else
@@ -127,14 +151,213 @@ function  ob(commands) {
                 return _res(false,"Переменная не найдена")
             }
         }
+        case "array_print":{
+            if(com.length ==2) {
+                let array = find_arrays(com[1]);
+                console.log(11,JSON.stringify(array));
+                if (array != null)
+                    return _res(true, com[1] + " = " + JSON.stringify(array.value));
+                else
+                    return _res(false, "Массив не найден");
+            }
+            else{
+                return _res(false,"Массив не найден")
+            }
+        }
+        case "into_chart":{
+            if(com.length ==2) {
+                let array = find_arrays(com[1]);
+                console.log(11,JSON.stringify(array));
+                if (array != null) {
+                    window.chart.addSeries({
+                        name: array.name,
+                        data: array.value,
+                    });
+                    return _res(true, com[1] + " done ");
+                }
+                else
+                    return _res(false, "Массив не найден");
+            }
+            else{
+                return _res(false,"Массив не найден")
+            }
+        }
+        case "compare":{
+            let perem = find_params(com[1]);
+            if(com.length ==3) {
+                let perem = find_params(com[1]);
+                console.log(11,JSON.stringify(params));
+
+                if (perem != null)
+                {
+
+                }
+                else
+                    return _res(false, "Переменная не надена");
+            }
+            else{
+                return _res(false,"Переменная не найдена")
+            }
+
+            let perem2 = find_params(com[2]);
+            if(com.length ==3) {
+
+                console.log(11,JSON.stringify(params));
+
+                if (perem2 != null)
+                {
+
+                }
+                else
+                return _res(false, "Переменная не надена");
+            }
+            else{
+                return _res(false,"Переменная не найдена")
+            }
+            console.log(+com[1] )
+            if(+perem.value > +perem2.value)
+                return _res(true, com[1] + " > " + com[2]);
+            if(+perem.value < +perem2.value)
+                return _res(true, com[1] + " < " + com[2]);
+            if(+perem.value == +perem2.value)
+                return _res(true, com[1] + " = " + com[2]);
+            return _res(true, "Я не знаю");
+
+        }
+        case "array_push":{
+                let array = find_arrays(com[1]);
+                console.log("array",JSON.stringify(array));
+                if (array != null)
+                {
+                    if(array.value ==null){
+                        array.value = [];
+                    }
+                    let value = ras(com.slice(2));
+                    if(value.status) {
+                        array.value.push(value.data);
+                        return _res(true, com[1] + ".top = " + value.data);
+                    }
+                    else
+                        return _res(false, value.error)
+                }
+                else
+                    return _res(false, "Массив не найден");
+        }
+
+        case "array_map":{
+            if(com.length!=2) {
+                let array = find_arrays(com[1]);
+                console.log("array", JSON.stringify(array));
+
+                if (array != null) {
+                    if (array.value == null) {
+                        array.value = [];
+                    }
+                    
+                    // let value = ras(com.slice(2));
+                    // if (value.status) {
+                    //     array.value.push(value.data);
+                    //     return _res(true, com[1] + ".top = " + value.data);
+                    // } else
+                    //     return _res(false, value.error)
+                } else
+                    return _res(false, "Массив не найден");
+            }else{
+                return _res(false, "Массив не найден");
+            }
+        }
+
+        case "array_concate":{
+
+
+            let in_arr;
+            if(com.length ==4) {
+
+                in_arr = find_arrays(com[1]);
+                console.log(11,JSON.stringify(in_arr));
+
+                if (in_arr != null)
+                {
+
+                }
+                else
+                    return _res(false, "Массив не найден");
+            }
+            else{
+                return _res(false,"Массив не найден")
+            }
+
+            let arr1;
+            if(com.length ==4) {
+                arr1 = find_arrays(com[2]);
+                console.log(11,JSON.stringify(arr1));
+
+                if (arr1 != null)
+                {
+
+                }
+                else
+                    return _res(false, "Массив не найден");
+            }
+            else{
+                return _res(false,"Массив не найден")
+            }
+
+            let arr2;
+            if(com.length ==4) {
+                arr2 = find_arrays(com[3]);
+                console.log(11,JSON.stringify(arr2));
+
+                if (arr2 != null)
+                {
+
+                }
+                else
+                    return _res(false, "Массив не найден");
+            }
+            else{
+                return _res(false,"Массив не найден")
+            }
+            try{
+                var newarr= [];
+
+                for(let i=0;i<arr1.value.length;i++){
+                    newarr.push(arr1.value[i])
+                }
+                for(let i=0;i<arr2.value.length;i++){
+                    newarr.push(arr2.value[i])
+                }
+                console.log('^^^^',  newarr,arr1.value,arr2.value );
+                in_arr.value= newarr;
+                return _res(true,in_arr.name+" = "+JSON.stringify(in_arr.value));
+            }catch (e) {
+                return _res(true, "Не получилось");
+            }
+        }
+/*
+
+            array_init arr1;
+            array_init arr2;
+            array_push arr1 123;
+            array_push arr1 124;
+            array_push arr1 125;
+            array_push arr1 126;
+            array_push arr2 124;
+            array_push arr2 125;
+            array_push arr2 126;
+            array_push arr2 127;
+            array_init arr3;
+            array_concate arr3 arr1 arr2
+            */
         default:{
             if(find_params(com[0])!=null){
                 var param =   find_params(com[0]);
+
+
                 if(com[1] == "="){
                     let value = ras(com.slice(2));
-                    param.value = value;
                     if(value.status) {
-                        param.value = value.res;
+                        param.value = value.data;
                         return _res(true, com[0] + "=" + value.data);
                     }
                     else
@@ -157,6 +380,9 @@ function _res(status,res){
 function init(name){
     params.push({name:name,value:null});
 }
+function array_init(name){
+    arrays.push({name:name,value:null});
+}
 
 function ras(data){
     let _data =data.map((el)=>{return el.trim()}).join('');
@@ -168,8 +394,40 @@ function ras(data){
 
 
 function _ras(data){
-        for(let h = 0;h<arr_command.length;h++)  data = find_com(data,arr_command[h]);
+        for(let h = 0;h<arr_command.length;h++)
+        {
+            data = find_com(data,arr_command[h]);
+        }
         try {
+
+            for(let u =0;u<params.length;u++){
+                if(data.indexOf(params[u].name)>=0){
+
+                    for(let i=0;i<data.length;i++)
+                    {
+                        let idx = data.indexOf(params[u].name);
+                        console.log(idx);
+                        if(idx==-1) break;
+                        if(
+                            (
+                                idx-1<0 ||
+                                data[idx-1]=="+" ||
+                                data[idx-1]=="-" ||
+                                data[idx-1]=="/" ||
+                                data[idx-1]=="*"
+                            ) && (
+                                idx+params[u].name.length > data.length-1||
+                                data[idx+params[u].name.length]=="+" ||
+                                data[idx+params[u].name.length]=="-" ||
+                                data[idx+params[u].name.length]=="/" ||
+                                data[idx+params[u].name.length]=="*"
+                            )
+                        ){
+                           data = data.substring(0,idx) + params[u].value + data.substring(idx+params[u].name.length);
+                        }
+                    }
+                }
+            }
             return eval(data);
         }catch (e) {
             return "ОШИБКА";
@@ -180,8 +438,6 @@ function find_com(data,func){
     let newdata="";
     var pos = 0;
     var end =0;
-
-
     let k=0;
     for(let y = 0; y < data.length;y++)
     {
@@ -197,7 +453,7 @@ function find_com(data,func){
         let comd_str = data.substring(foundPos, end);
         let incom= comd_str.substring(func.length,comd_str.length-1);
         incom =_ras(incom);
-        newdata +=_rasc(func,incom);
+        newdata +="("+_rasc(func,incom)+")";
         pos = end + 1;
     }
     if(newdata == "") {
@@ -212,11 +468,11 @@ let arr_command = [
      "cos(",
      "tan(",
      "log(",
-     "asin(",
-     "acos(",
-     "atan(",
-     "cosh(",
-     "sinh(",
+     "asn(",
+     "acs(",
+     "atn(",
+     "csh(",
+     "snh(",
 ];
 function _rasc(func,incom){
     switch (func) {
@@ -232,19 +488,19 @@ function _rasc(func,incom){
         case "log(":{
             return Math.log(+incom);
         }
-        case "asin(":{
+        case "asn(":{
             return Math.asin(+incom);
         }
-        case "acos(":{
+        case "acs(":{
             return Math.acos(+incom);
         }
-        case "atan(":{
+        case "atn(":{
             return Math.atan(+incom);
         }
-        case "cosh(":{
+        case "csh(":{
             return Math.cosh(+incom);
         }
-        case "sinh(":{
+        case "snh(":{
             return Math.sinh(+incom);
         }
     }
