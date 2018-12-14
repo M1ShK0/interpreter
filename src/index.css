@@ -1,0 +1,27 @@
+
+
+
+body {
+  margin: 0;
+  padding: 0;
+  background: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAUAAAAFCAYAAACNbyblAAAAI0lEQVQIW2NkwAT/GdHE/gP5jMiCYAGQIpggXAAmiCIAEgQAAE4FBbECyZcAAAAASUVORK5CYII=) #567;
+}
+
+code {
+  font-family: source-code-pro, Menlo, Monaco, Consolas, "Courier New",
+    monospace;
+}
+
+
+.app{
+  font-size: 26px;
+  font-family: 'Mali', cursive;
+  position: absolute;
+  width: 100%;
+  margin-top: 5%;
+  text-align: center;
+  color: wheat;
+}
+.friend{
+  margin:2px!important;
+}
