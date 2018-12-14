@@ -245,7 +245,7 @@ function  ob(commands) {
         }
 
         case "array_map":{
-            if(com.length!=2) {
+            if(com.length!=3) {
                 let array = find_arrays(com[1]);
                 console.log("array", JSON.stringify(array));
 
@@ -253,7 +253,43 @@ function  ob(commands) {
                     if (array.value == null) {
                         array.value = [];
                     }
-                    
+                    let ff = null;
+                    switch (com[3]) {
+                        case "sin":{
+                            ff= Math.sin; break;
+                        }
+                        case "cos":{
+                            ff= Math.cos;break;
+                        }
+                        case "tan":{
+                            ff= Math.tan;break;
+                        }
+                        case "log":{
+                            ff= Math.log;break;
+                        }
+                        case "asn":{
+                            ff= Math.asin;break;
+                        }
+                        case "acs":{
+                            ff= Math.acos;break;
+                        }
+                        case "atn":{
+                            ff= Math.atan;break;
+                        }
+                        case "csh":{
+                            ff= Math.cosh;break;
+                        }
+                        case "snh":{
+                            ff= Math.sinh;break;
+                        }
+                    }
+
+
+                    if(ff==null){
+                        return _res(false, "Функция не найдена");
+                    }
+
+
                     // let value = ras(com.slice(2));
                     // if (value.status) {
                     //     array.value.push(value.data);
