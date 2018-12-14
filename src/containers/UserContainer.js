@@ -245,7 +245,8 @@ function  ob(commands) {
         }
 
         case "array_map":{
-            if(com.length!=3) {
+
+            if(com.length ==3) {
                 let array = find_arrays(com[1]);
                 console.log("array", JSON.stringify(array));
 
@@ -254,7 +255,7 @@ function  ob(commands) {
                         array.value = [];
                     }
                     let ff = null;
-                    switch (com[3]) {
+                    switch (com[2]) {
                         case "sin":{
                             ff= Math.sin; break;
                         }
@@ -288,14 +289,13 @@ function  ob(commands) {
                     if(ff==null){
                         return _res(false, "Функция не найдена");
                     }
+                    for(let i=0; i <array.value.length; i++){
+                        array.value[i] = ff(array.value[i]);
+                    }
+                    return _res(true, array.name+" = "+JSON.stringify(array.value));
 
 
-                    // let value = ras(com.slice(2));
-                    // if (value.status) {
-                    //     array.value.push(value.data);
-                    //     return _res(true, com[1] + ".top = " + value.data);
-                    // } else
-                    //     return _res(false, value.error)
+
                 } else
                     return _res(false, "Массив не найден");
             }else{
@@ -303,6 +303,23 @@ function  ob(commands) {
             }
         }
 
+
+        /*
+            array_init arr1;
+            array_init arr2;
+            array_push arr1 123;
+            array_push arr1 124;
+            array_push arr1 125;
+            array_push arr1 126;
+            array_push arr2 124;
+            array_push arr2 125;
+            array_push arr2 126;
+            array_push arr2 127;
+            array_init arr3;
+            array_concate arr3 arr1 arr2;
+            array_map arr3 sin;
+            into_chart arr3;
+      */
         case "array_concate":{
 
 
