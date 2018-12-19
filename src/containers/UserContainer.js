@@ -96,7 +96,7 @@ class UserContainer extends React.Component {
                 else
                     {
             $('#container').css('display','none');
-            socket = io('http://localhost:1489');
+            socket = io('http://192.168.43.72:1489');
 
             return (
                 <div>
@@ -106,7 +106,12 @@ class UserContainer extends React.Component {
 
                             style={{width:100}}
                             value={this.state.Plan}
-                            onChange={this.handleChange}
+                            onChange={(ev)=>{
+								states.v = ev.target.value;
+								sendd();
+							this.handleChange(ev)
+							}
+							}
                             inputProps={{
                                 name: 'Plan',
                                 id: 'Plan',
@@ -129,25 +134,52 @@ class UserContainer extends React.Component {
 
                             style={{width:100}}
                             value={this.state.Ug}
-                            onChange={this.handleChange}
+                            onChange={(ev)=>{
+								states.u = ev.target.value;sendd();
+							this.handleChange(ev)
+							}
+							}
                             inputProps={{
                                 name: 'Ug',
                                 id: 'Ug',
                             }}
                         >
                             <MenuItem value={1}>-5</MenuItem>
-                            <MenuItem value={2}>-4</MenuItem>
-                            <MenuItem value={3}>-3</MenuItem>
-                            <MenuItem value={4}>-2</MenuItem>
-                            <MenuItem value={5}>-1</MenuItem>
-                            <MenuItem value={6}>0</MenuItem>
-                            <MenuItem value={7}>1</MenuItem>
-                            <MenuItem value={8}>2</MenuItem>
-                            <MenuItem value={9}>3</MenuItem>
-                            <MenuItem value={10}>4</MenuItem>
-                            <MenuItem value={10}>5</MenuItem>
+                            <MenuItem value={10}>-4</MenuItem>
+                            <MenuItem value={20}>-3</MenuItem>
+                            <MenuItem value={30}>-2</MenuItem>
+                            <MenuItem value={40}>-1</MenuItem>
+                            <MenuItem value={50}>0</MenuItem>
+                            <MenuItem value={60}>1</MenuItem>
+                            <MenuItem value={70}>2</MenuItem>
+                            <MenuItem value={80}>3</MenuItem>
+                            <MenuItem value={90}>4</MenuItem>
+                            <MenuItem value={99}>5</MenuItem>
                         </Select>
                     </div>
+						<br/>
+						<div style={{color:'#000',borderRadius:5,margin:5,backgroundColor:'#fffe',display:'inline-block'}}>
+							Температура
+							<TextField
+							  id="temp"
+						
+							  style={{margin:5}}
+								
+							  variant="outlined"
+							/>
+						</div>
+					<div style={{color:'#000',borderRadius:5,margin:5,backgroundColor:'#fffe',display:'inline-block'}}>
+						Расстояние
+						<TextField
+							style={{margin:5}}
+						  id="ras"
+						
+				
+						
+						  variant="outlined"
+						/>
+					</div>
+				
 
                     <div>
 
@@ -159,6 +191,7 @@ class UserContainer extends React.Component {
     }
 }
         var socket;
+		var states={v:0,u:1}
 
 const mapStateToProps = store => {
     return {
@@ -214,6 +247,28 @@ function v(code){
   }
   return result;
 }
+
+
+function sendd(){
+	console.log(states)
+	socket.emit('send',states);
+	socket.on('send',function(data){
+		console.log(data);
+		
+		if(data.indexOf('{')>0){
+			try{
+				let res =(JSON.parse(data.substring(data.indexOf('{'))));
+				$('#temp').val(res.T);
+				$('#ras').val(res.D);
+				}catch(e){
+				}
+		}
+		
+	})
+}
+
+setInterval(()=>{sendd()},2000)
+
 
 function  ob(commands) {
    // let res = {status:true,data:command};
