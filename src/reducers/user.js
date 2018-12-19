@@ -7,7 +7,8 @@ const initialState = {
     error: '',
     friends:[],
     isFetching: false,
-    isFetchingFriends: false
+    isFetchingFriends: false,
+    page:1,
 }
 
 export function userReducer(state = initialState, action) {

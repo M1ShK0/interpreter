@@ -1,12 +1,42 @@
 import React from 'react'
 import { connect } from 'react-redux'
+import io from 'socket.io-client';
 import { User } from '../components/User'
 import TextField from '@material-ui/core/TextField';
 import { handleLogin } from '../actions/UserAction'
 import {UserGetStatus} from "../actions/UserGetStatus";
 import {UserLogout} from "../actions/LogOut";
+import ListItemText from '@material-ui/core/ListItemText';
+import MenuItem from '@material-ui/core/MenuItem';
+import Select from '@material-ui/core/Select';
+
 import $ from "jquery";
+
+
 class UserContainer extends React.Component {
+
+
+    handleChange = event => {
+
+        this.setState({ [event.target.name]: event.target.value });
+    };
+    state = {
+        Type: '',
+        Style:'',
+        name: [],
+        name2:[],
+        labelWidth: 0,
+        Unic:'',
+        Mat:'',
+        Bim:'',
+        Stroy:'',
+        Park:'',
+        Plan:1,
+        Prid:'',
+        Etaj:'',
+        Ug:6,
+    };
+
 
     constructor(props){
         super(props);
@@ -33,6 +63,9 @@ class UserContainer extends React.Component {
     render() {
         const { user, handleLogin,UserLogout } = this.props
 
+        if(user.page ==0){
+
+
         return (
             <div>
                 <TextField
@@ -55,10 +88,77 @@ class UserContainer extends React.Component {
                 <div id="stack_graf">
 
                 </div>
+
+
             </div>
         )
+                }
+                else
+                    {
+            $('#container').css('display','none');
+            socket = io('http://localhost:1489');
+
+            return (
+                <div>
+                    <div style={{backgroundColor:"rgba(255,255,255,0.3)",display:"inline-block"}}>
+                        Скорость
+                        <Select
+
+                            style={{width:100}}
+                            value={this.state.Plan}
+                            onChange={this.handleChange}
+                            inputProps={{
+                                name: 'Plan',
+                                id: 'Plan',
+                            }}
+                        >
+                            <MenuItem value={1}>1</MenuItem>
+                            <MenuItem value={2}>2</MenuItem>
+                            <MenuItem value={3}>3</MenuItem>
+                            <MenuItem value={4}>4</MenuItem>
+                            <MenuItem value={5}>5</MenuItem>
+                            <MenuItem value={6}>6</MenuItem>
+                            <MenuItem value={7}>7</MenuItem>
+                            <MenuItem value={8}>8</MenuItem>
+                            <MenuItem value={9}>9</MenuItem>
+                            <MenuItem value={10}>10</MenuItem>
+                            <MenuItem value={10}>10</MenuItem>
+                        </Select>
+                        Угол:
+                        <Select
+
+                            style={{width:100}}
+                            value={this.state.Ug}
+                            onChange={this.handleChange}
+                            inputProps={{
+                                name: 'Ug',
+                                id: 'Ug',
+                            }}
+                        >
+                            <MenuItem value={1}>-5</MenuItem>
+                            <MenuItem value={2}>-4</MenuItem>
+                            <MenuItem value={3}>-3</MenuItem>
+                            <MenuItem value={4}>-2</MenuItem>
+                            <MenuItem value={5}>-1</MenuItem>
+                            <MenuItem value={6}>0</MenuItem>
+                            <MenuItem value={7}>1</MenuItem>
+                            <MenuItem value={8}>2</MenuItem>
+                            <MenuItem value={9}>3</MenuItem>
+                            <MenuItem value={10}>4</MenuItem>
+                            <MenuItem value={10}>5</MenuItem>
+                        </Select>
+                    </div>
+
+                    <div>
+
+                    </div>
+                </div>
+            )
+
+        }
     }
 }
+        var socket;
 
 const mapStateToProps = store => {
     return {
